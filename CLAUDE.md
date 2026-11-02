@@ -44,7 +44,7 @@ Lo que SÍ vive en este repo:
   - Home, especialidades, perfiles de doctores → Server Components + SSG/ISR (rápido, indexable, mínimo JS)
   - Buscador/listado de doctores → Server Component para el listado inicial + Client Component solo para filtros interactivos
   - Flujo de agendar cita → Client Components (formulario, calendario) dentro del grupo de rutas de booking
-- **Estilos:** Tailwind CSS con `tailwind.config.js` custom (ver sección 7) — nunca usar la paleta default de Tailwind (`slate`, `blue-500`, etc.)
+- **Estilos:** Tailwind CSS v4 con los tokens en `src/styles/theme.css` (`@theme`, ver sección 7) — nunca usar la paleta default de Tailwind (`slate`, `blue-500`, etc.)
 - **Validación de formularios:** Zod
 - **Auth del paciente (solo para agendar/mis-citas):** ligera, tipo magic link/OTP — no es el sistema de permisos de la plataforma completa
 
@@ -196,7 +196,7 @@ Cada bloque de contenido (feature, testimonio, card de especialidad) se revela a
 ### Header sticky con glass
 
 - Estado inicial (scroll = 0): transparente o fondo sólido simple, sin blur — integrado al hero.
-- Al despegarse del top: `backdrop-filter: blur(10-16px)`, fondo semi-transparente (`bg-white/70` light, `bg-dark-surface/70` dark), borde inferior 1px sutil (`neutral-200` / `dark-border`). Transición 200–250ms, sin salto.
+- Al despegarse del top: `backdrop-filter: blur(10-16px)`, fondo semi-transparente (`bg-white/70`), borde inferior 1px sutil (`neutral-200`). Transición 200–250ms, sin salto.
 - Este es uno de los 1–2 usos de glass presupuestados en toda la página. El estado de scroll se maneja en un Client Component mínimo (o `IntersectionObserver` sobre un sentinel), nunca con una librería completa de scroll.
 
 ---
@@ -211,10 +211,7 @@ Cada bloque de contenido (feature, testimonio, card de especialidad) se revela a
 **Secundario (verde — confirmaciones, estados "disponible"):**
 `secondary-50 #EAF8F1` · `100 #C9EEDD` · `200 #94DDBB` · `300 #5FCB99` · `400 #3EB682` · **`500 #2C9B6B` (base)** · `600 #237C56` · `700 #1B5F42` · `800 #13432E` · `900 #0B2A1D`
 
-**Dark mode (navy — no negro puro):**
-`dark-bg #02192C` (fondo) · `dark-surface #0A2740` (cards) · `dark-surface-2 #123349` (elevado/hover) · `dark-border #1D4258` · `dark-text #EAF4F7`
-
-**Neutrales (tinte azulado, ancla con `dark-bg`):**
+**Neutrales (tinte azulado; `neutral-900` es el navy de marca):**
 `neutral-50 #F7FAFB` · `100 #EDF2F4` · `200 #DCE4E8` · `300 #C2CDD3` · `400 #94A3AC` · `500 #65767F` · `700 #37424A` · `900 #02192C`
 
 **Acento cálido (terracota — CTA secundario, badges, rating):**
@@ -232,8 +229,7 @@ Cada bloque de contenido (feature, testimonio, card de especialidad) se revela a
 | 400     | Hover (se aclara)                                                                 |
 | **500** | Estado base / acción principal                                                    |
 | 600     | Active/pressed (se oscurece) — también texto sobre fondo 50/100 para contraste AA |
-| 700     | Hover en dark mode                                                                |
-| 800–900 | Gradientes, sombras coloreadas, variantes dark-mode-only                          |
+| 800–900 | Gradientes y sombras coloreadas                                                   |
 
 Convención de hover/active: **hover aclara (400), active oscurece (600)** — nunca al revés.
 
@@ -253,67 +249,16 @@ Convención de hover/active: **hover aclara (400), active oscurece (600)** — n
 - Ilustraciones custom en duotono con gradiente celeste→verde (hero, estados vacíos, onboarding) — nunca stock genérico tipo "doctor sonriendo con bata blanca"
 - Fotografía real obligatoria en perfiles de especialistas (no negociable para conversión en salud)
 - Fotografía de apoyo (equipo/oficina): grading de color hacia navy/verde para coherencia de marca
-- Todas las imágenes vía `next/image` — formatos WebP/AVIF, `priority` solo en el hero, `loading="lazy"` en el resto
+- Todas las imágenes vía `next/image` (lazy loading y dimensiones sin saltos de layout), con `priority` solo en el hero. El optimizador de Vercel está **desactivado** (`images.unoptimized` en `next.config.ts`) para no pagar por transformaciones: **la optimización es manual antes de subir el archivo**.
+- Checklist manual: exportar en WebP o AVIF (JPG solo si no hay alternativa), ancho máximo real de uso (≈ 2× el tamaño en pantalla; hero ≤ 1600 px), calidad 75–80, peso objetivo < 150 KB por imagen (hero < 250 KB), `width`/`height` siempre declarados y `sizes` donde la imagen sea fluida. Los SVG se sirven tal cual.
 
-### `tailwind.config.js` de referencia
+### Dónde viven los tokens
 
-```js
-export default {
-  darkMode: "class",
-  theme: {
-    extend: {
-      colors: {
-        primary: {
-          50: "#E6F9FD",
-          100: "#C0F0FA",
-          200: "#85E3F5",
-          300: "#4DD5EF",
-          400: "#1CC5E8",
-          500: "#00B7E2",
-          600: "#0092B8",
-          700: "#006F8C",
-          800: "#004D61",
-          900: "#002E3A",
-        },
-        secondary: {
-          50: "#EAF8F1",
-          100: "#C9EEDD",
-          200: "#94DDBB",
-          300: "#5FCB99",
-          400: "#3EB682",
-          500: "#2C9B6B",
-          600: "#237C56",
-          700: "#1B5F42",
-          800: "#13432E",
-          900: "#0B2A1D",
-        },
-        accent: { 400: "#F0A85C", 500: "#E1873D", 600: "#C06B26" },
-        dark: {
-          bg: "#02192C",
-          surface: "#0A2740",
-          surface2: "#123349",
-          border: "#1D4258",
-          text: "#EAF4F7",
-        },
-        neutral: {
-          50: "#F7FAFB",
-          100: "#EDF2F4",
-          200: "#DCE4E8",
-          300: "#C2CDD3",
-          400: "#94A3AC",
-          500: "#65767F",
-          700: "#37424A",
-          900: "#02192C",
-        },
-      },
-      fontFamily: {
-        heading: ['"Baloo 2"', "sans-serif"],
-        sans: ['"Plus Jakarta Sans"', "sans-serif"],
-      },
-    },
-  },
-};
-```
+- `src/styles/theme.css` es la **única fuente** de tokens (`@theme`): paleta, semánticos, radios, sombras (`shadow-card`, `shadow-raised`, `shadow-glow`), easing (`ease-out-soft`) y fuentes. Borra la paleta por defecto de Tailwind (`--color-*: initial`), así que solo existen los colores de marca.
+- `src/styles/globals.css` importa Tailwind y el tema, y define la base: fondo `neutral-50`, texto `neutral-700`, headings en `font-heading` (Baloo 2), foco visible, `::selection`, `prefers-reduced-motion` y la utilidad `reveal` (scroll-driven, con `@supports`).
+- Las fuentes se cargan con `next/font/google` en `app/layout.tsx` y exponen `--font-baloo` y `--font-jakarta`.
+- **Sin dark mode**: el sitio es solo claro. No hay `dark:` ni tokens `dark-*`. Si se reintroduce, se agrega con `@custom-variant dark`.
+- No existe `tailwind.config.js`; no volver a crearlo.
 
 ---
 
@@ -438,7 +383,7 @@ Los commits previos a esta regla en español no se reescriben.
 - **Cabeceras de seguridad** definidas en `next.config.ts` para todas las rutas: CSP, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy` y HSTS. `poweredByHeader` desactivado.
 - **CSP sin nonces**, a propósito: un nonce obliga a renderizar todo de forma dinámica y rompería el SSG/ISR de la sección 5. A cambio `script-src` permite `'unsafe-inline'`; el resto es estricto (`default-src 'self'`, `frame-ancestors 'none'`, `object-src 'none'`).
 - **Todo origen de terceros nuevo se agrega explícitamente a la CSP** en `next.config.ts` (analytics, mapas, CDN de imágenes de doctores, etc.). Si algo "no carga" tras sumar un servicio, revisar primero la consola por violaciones de CSP. Hoy permite `*.culqi.com` y el origen de `NEXT_PUBLIC_API_BASE_URL`.
-- Cuando se agreguen fotos de doctores desde otro dominio, declarar también `images.remotePatterns` en `next.config.ts` y su origen en `img-src`.
+- Con `images.unoptimized` el navegador descarga las imágenes directo de su origen, así que no hace falta `remotePatterns`; solo declarar el origen en `img-src` (hoy: el de la API). Las fotos de doctores redirigen (302) a otro host: añadirlo a `img-src` cuando se conozca.
 - **Entorno:** copiar `.env.example` a `.env.local`. Toda variable nueva se declara en `src/shared/lib/env.ts` y en `.env.example` (única plantilla versionada; `.env*` está ignorado).
 - **Node:** versión de referencia en `.nvmrc` (24); `engines` exige ≥ 22.
 - **Formato de archivos:** `.editorconfig` y `.gitattributes` fijan LF, UTF-8 y 2 espacios para que el editor, Git y Biome coincidan.
