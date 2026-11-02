@@ -6,9 +6,10 @@
 import Script from "next/script";
 import { useState } from "react";
 import { CulqiPaymentModal, type PayRequest, type SavedCard } from "@/features/payments";
+import { env } from "@/shared/lib/env";
 
-const API = process.env.NEXT_PUBLIC_API_BASE_URL;
-const CULQI_PUBLIC_KEY = process.env.NEXT_PUBLIC_CULQI_PUBLIC_KEY;
+const API = env.NEXT_PUBLIC_API_BASE_URL;
+const CULQI_PUBLIC_KEY = env.NEXT_PUBLIC_CULQI_PUBLIC_KEY;
 
 type CheckoutResponse = {
   appointmentPaymentId: string;

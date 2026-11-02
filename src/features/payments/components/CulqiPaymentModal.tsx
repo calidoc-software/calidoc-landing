@@ -2,11 +2,12 @@
 
 import { Baloo_2, Plus_Jakarta_Sans } from "next/font/google";
 import { useEffect, useRef, useState } from "react";
+import { env } from "@/shared/lib/env";
 
 const heading = Baloo_2({ subsets: ["latin"], weight: ["600", "700"] });
 const body = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
-const CULQI_PUBLIC_KEY = process.env.NEXT_PUBLIC_CULQI_PUBLIC_KEY;
+const CULQI_PUBLIC_KEY = env.NEXT_PUBLIC_CULQI_PUBLIC_KEY;
 const CONTAINER_ID = "culqi-container";
 
 export type PaymentSummary = {
