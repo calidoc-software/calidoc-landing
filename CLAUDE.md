@@ -144,7 +144,7 @@ Flujo permitido: `app → features → shared`. Nunca al revés.
    - `server.ts` → empieza con `import 'server-only'`: fetchers y Server Actions.
 5. Los fetchers (`api/`) devuelven **modelos de vista** (ya pasados por `mappers/`); los DTO crudos de calidoc-api no salen del feature.
 6. Todo acceso HTTP a calidoc-api pasa por `shared/lib/api`; ningún componente hace `fetch` directo a la API.
-7. Variables de entorno solo vía `shared/lib/env.ts` (validadas con zod), nunca `process.env` suelto.
+7. Variables de entorno solo vía `shared/lib/env.ts` (validadas con zod; falla el build si falta o es inválida una variable requerida), nunca `process.env` suelto. `env.ts` contiene solo variables públicas (`NEXT_PUBLIC_*`, seguras en Client Components); las privadas (`AUTH_SECRET`, etc.) van en un archivo aparte con `import "server-only"` cuando se agreguen. Cada variable nueva se declara en el schema y en `.env.example`.
 8. Alias de import `@/*` → `src/*`; sin rutas relativas que suban más de un nivel (`../../`).
 9. Estas reglas se hacen cumplir con ESLint (`no-restricted-imports` o `eslint-plugin-boundaries`), no solo por convención.
 
