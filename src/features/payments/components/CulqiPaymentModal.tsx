@@ -68,7 +68,8 @@ export function CulqiPaymentModal({ open, summary, email, savedCards, onPay, onC
   const [choice, setChoice] = useState<string | null>(null);
 
   const defaultChoice = (savedCards.find((c) => c.isDefault) ?? savedCards[0])?.id ?? NEW_CARD;
-  const selected = savedCards.some((c) => c.id === choice) || choice === NEW_CARD ? choice! : defaultChoice;
+  const selected =
+    savedCards.some((c) => c.id === choice) || choice === NEW_CARD ? choice! : defaultChoice;
   const payingNewCard = selected === NEW_CARD;
   const select = (id: string) => {
     setError(null);
@@ -173,7 +174,10 @@ export function CulqiPaymentModal({ open, summary, email, savedCards, onPay, onC
     >
       <div className="flex items-center justify-between border-b border-neutral-200 px-6 py-4">
         <div>
-          <h2 id="pay-title" className={`${heading.className} text-xl leading-tight text-neutral-900`}>
+          <h2
+            id="pay-title"
+            className={`${heading.className} text-xl leading-tight text-neutral-900`}
+          >
             Pago de tu cita
           </h2>
           <p className="flex items-center gap-1 text-xs text-neutral-500">

@@ -5,11 +5,7 @@
 
 import Script from "next/script";
 import { useState } from "react";
-import {
-  CulqiPaymentModal,
-  type PayRequest,
-  type SavedCard,
-} from "@/modules/payments/components/CulqiPaymentModal";
+import { CulqiPaymentModal, type PayRequest, type SavedCard } from "@/features/payments";
 
 const API = process.env.NEXT_PUBLIC_API_BASE_URL;
 const CULQI_PUBLIC_KEY = process.env.NEXT_PUBLIC_CULQI_PUBLIC_KEY;
@@ -38,8 +34,7 @@ export function PaymentTest() {
       `${label}${data === undefined ? "" : "\n" + JSON.stringify(data, null, 2)}`,
     ]);
 
-  const paymentPath = (path: string) =>
-    `/appointments/${appointmentId.trim()}/payment/${path}`;
+  const paymentPath = (path: string) => `/appointments/${appointmentId.trim()}/payment/${path}`;
 
   const apiFetch = async (path: string, method: "GET" | "POST", body?: object) => {
     const res = await fetch(`${API}/api/v1${path}`, {
@@ -82,7 +77,11 @@ export function PaymentTest() {
 
   const pay = async ({ tokenId, savedCardId, saveCard, isYape }: PayRequest) => {
     setModalOpen(false);
-    addLog(savedCardId ? `tarjeta guardada: ${savedCardId}` : `token Culqi: ${tokenId} (${isYape ? "Yape" : `tarjeta, guardar: ${saveCard}`})`);
+    addLog(
+      savedCardId
+        ? `tarjeta guardada: ${savedCardId}`
+        : `token Culqi: ${tokenId} (${isYape ? "Yape" : `tarjeta, guardar: ${saveCard}`})`,
+    );
     try {
       const appointmentPaymentId = checkout?.appointmentPaymentId;
       const data = savedCardId
@@ -90,10 +89,10 @@ export function PaymentTest() {
         : isYape
           ? await apiFetch(paymentPath("yape"), "POST", { appointmentPaymentId, token: tokenId })
           : await apiFetch(paymentPath("card"), "POST", {
-            appointmentPaymentId,
-            token: tokenId,
-            saveCard: saveCard ?? false,
-          });
+              appointmentPaymentId,
+              token: tokenId,
+              saveCard: saveCard ?? false,
+            });
       addLog("pago OK", data);
     } catch (e) {
       addLog(`pago ERROR: ${(e as Error).message}`);
@@ -123,11 +122,22 @@ export function PaymentTest() {
 
       <label className="flex flex-col gap-1 text-sm">
         ID de la cita
-        <input className={inputCls} value={appointmentId} onChange={(e) => setAppointmentId(e.target.value)} placeholder="01a14599-6daf-78c9-bc99-78e46a60e89a" />
+        <input
+          className={inputCls}
+          value={appointmentId}
+          onChange={(e) => setAppointmentId(e.target.value)}
+          placeholder="01a14599-6daf-78c9-bc99-78e46a60e89a"
+        />
       </label>
       <label className="flex flex-col gap-1 text-sm">
         Email del paciente
-        <input className={inputCls} type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="paciente@correo.com" />
+        <input
+          className={inputCls}
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="paciente@correo.com"
+        />
       </label>
       <label className="flex flex-col gap-1 text-sm">
         Bearer token de la API (si los endpoints requieren auth)
@@ -135,6 +145,7 @@ export function PaymentTest() {
       </label>
 
       <button
+        type="button"
         onClick={getCheckout}
         disabled={busy || !appointmentId.trim() || missingEnv}
         className="rounded-lg bg-primary-500 px-4 py-2 font-medium text-white hover:bg-primary-400 active:bg-primary-600 disabled:opacity-50"
@@ -147,15 +158,22 @@ export function PaymentTest() {
           <p className="font-semibold">
             Total a pagar: {checkout.currency} {checkout.amount.toFixed(2)}
           </p>
-          <p className="text-neutral-500">Expira: {new Date(checkout.checkoutExpiresAt).toLocaleString()}</p>
+          <p className="text-neutral-500">
+            Expira: {new Date(checkout.checkoutExpiresAt).toLocaleString()}
+          </p>
           <button
+            type="button"
             onClick={() => setModalOpen(true)}
             disabled={!scriptReady || !email}
             className="mt-3 rounded-lg bg-secondary-500 px-4 py-2 font-medium text-white hover:bg-secondary-400 active:bg-secondary-600 disabled:opacity-50"
           >
             2. Pagar con Culqi
           </button>
-          {!email && <p className="mt-1 text-xs text-neutral-500">Ingresa un email para habilitar el pago.</p>}
+          {!email && (
+            <p className="mt-1 text-xs text-neutral-500">
+              Ingresa un email para habilitar el pago.
+            </p>
+          )}
         </section>
       )}
 

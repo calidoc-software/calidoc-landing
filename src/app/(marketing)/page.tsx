@@ -21,7 +21,6 @@ export default function Home() {
           alt="Calidoc"
           width={501}
           height={200}
-      
           className="h-auto w-56 sm:w-64"
         />
 
@@ -29,10 +28,7 @@ export default function Home() {
           className="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-medium"
           style={{ borderColor: "#00b7e2", color: "#0f2b33" }}
         >
-          <span
-            className="h-2 w-2 animate-pulse rounded-full"
-            style={{ background: "#2c9b6b" }}
-          />
+          <span className="h-2 w-2 animate-pulse rounded-full" style={{ background: "#2c9b6b" }} />
           Sitio en construcción
         </span>
 
@@ -41,10 +37,9 @@ export default function Home() {
         </h1>
 
         <p className="max-w-md text-base leading-7 text-[#3f5b63] sm:text-lg">
-          Estamos construyendo <strong>Calidoc</strong>, la plataforma de
-          telemedicina donde encontrarás todo tipo de especialidades para
-          atenderte de forma <strong>presencial</strong> o{" "}
-          <strong>virtual</strong>.
+          Estamos construyendo <strong>Calidoc</strong>, la plataforma de telemedicina donde
+          encontrarás todo tipo de especialidades para atenderte de forma{" "}
+          <strong>presencial</strong> o <strong>virtual</strong>.
         </p>
 
         <div
@@ -54,9 +49,7 @@ export default function Home() {
           }}
         />
 
-        <p className="text-sm text-[#6b8188]">
-          Trabajando para atenderte mejor · Vuelve pronto
-        </p>
+        <p className="text-sm text-[#6b8188]">Trabajando para atenderte mejor · Vuelve pronto</p>
       </main>
 
       <footer className="relative z-10 mt-16 text-xs text-[#6b8188]">
