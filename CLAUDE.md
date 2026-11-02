@@ -421,12 +421,24 @@ Los commits previos a esta regla en español no se reescriben.
 
 ---
 
-## 12. Secciones a definir en próximas sesiones
+## 12. Seguridad base y entorno
+
+- **Cabeceras de seguridad** definidas en `next.config.ts` para todas las rutas: CSP, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy` y HSTS. `poweredByHeader` desactivado.
+- **CSP sin nonces**, a propósito: un nonce obliga a renderizar todo de forma dinámica y rompería el SSG/ISR de la sección 5. A cambio `script-src` permite `'unsafe-inline'`; el resto es estricto (`default-src 'self'`, `frame-ancestors 'none'`, `object-src 'none'`).
+- **Todo origen de terceros nuevo se agrega explícitamente a la CSP** en `next.config.ts` (analytics, mapas, CDN de imágenes de doctores, etc.). Si algo "no carga" tras sumar un servicio, revisar primero la consola por violaciones de CSP. Hoy permite `*.culqi.com` y el origen de `NEXT_PUBLIC_API_BASE_URL`.
+- Cuando se agreguen fotos de doctores desde otro dominio, declarar también `images.remotePatterns` en `next.config.ts` y su origen en `img-src`.
+- **Entorno:** copiar `.env.example` a `.env.local`. Toda variable nueva se declara en `src/shared/lib/env.ts` y en `.env.example` (única plantilla versionada; `.env*` está ignorado).
+- **Node:** versión de referencia en `.nvmrc` (24); `engines` exige ≥ 22.
+- **Formato de archivos:** `.editorconfig` y `.gitattributes` fijan LF, UTF-8 y 2 espacios para que el editor, Git y Biome coincidan.
+
+---
+
+## 13. Secciones a definir en próximas sesiones
 
 Este archivo se irá ampliando. Aún pendientes de documentar aquí:
 
 - [ ] Convenciones de nombrado de componentes (PascalCase, sufijos, co-ubicación de estilos)
-- [ ] Seguridad adicional (headers, CSP, manejo de datos de formularios, rate limiting del buscador y del login/OTP)
+- [ ] Seguridad adicional (manejo de datos de formularios, rate limiting del buscador y del login/OTP)
 - [ ] Convenciones de PR y checks de CI para este repo (Vercel preview deployments)
 - [ ] Accesibilidad: checklist WCAG AA específico (contraste ya pendiente de validar en Notion)
 - [ ] Contrato exacto de los endpoints de auth de calidoc-api (`/auth/login`, `/auth/refresh`, `/auth/google-login`) — shape de request/response, códigos de error
