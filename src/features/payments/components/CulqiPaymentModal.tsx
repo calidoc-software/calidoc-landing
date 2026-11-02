@@ -1,11 +1,7 @@
 "use client";
 
-import { Baloo_2, Plus_Jakarta_Sans } from "next/font/google";
 import { useEffect, useRef, useState } from "react";
 import { env } from "@/shared/lib/env";
-
-const heading = Baloo_2({ subsets: ["latin"], weight: ["600", "700"] });
-const body = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
 const CULQI_PUBLIC_KEY = env.NEXT_PUBLIC_CULQI_PUBLIC_KEY;
 const CONTAINER_ID = "culqi-container";
@@ -173,13 +169,13 @@ export function CulqiPaymentModal({ open, summary, email, savedCards, onPay, onC
       ref={dialogRef}
       onClose={() => onCloseRef.current()}
       aria-labelledby="pay-title"
-      className={`${body.className} m-auto w-[calc(100%-2rem)] max-w-md rounded-2xl bg-white p-0 text-neutral-700 shadow-2xl backdrop:bg-dark-bg/60`}
+      className="m-auto w-[calc(100%-2rem)] max-w-md rounded-2xl bg-white p-0 text-neutral-700 shadow-2xl backdrop:bg-neutral-900/60"
     >
       <div className="flex items-center justify-between border-b border-neutral-200 px-6 py-4">
         <div>
           <h2
             id="pay-title"
-            className={`${heading.className} text-xl leading-tight text-neutral-900`}
+            className="font-heading text-xl leading-tight font-semibold text-neutral-900"
           >
             Pago de tu cita
           </h2>

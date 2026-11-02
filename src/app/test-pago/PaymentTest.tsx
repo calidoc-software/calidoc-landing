@@ -190,7 +190,7 @@ export function PaymentTest() {
       )}
 
       {log.length > 0 && (
-        <pre className="overflow-x-auto whitespace-pre-wrap rounded-lg bg-dark-bg p-4 text-xs text-dark-text">
+        <pre className="overflow-x-auto whitespace-pre-wrap rounded-lg bg-neutral-900 p-4 text-xs text-neutral-100">
           {log.join("\n\n")}
         </pre>
       )}
