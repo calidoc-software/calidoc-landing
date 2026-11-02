@@ -6,7 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "npm run lint:biome && npm run lint:eslint",
+    "lint:biome": "biome check .",
+    "lint:eslint": "eslint .",
+    "format": "biome format --write .",
+    "fix": "biome check --write . && eslint . --fix",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "next": "16.3.4",
@@ -14,6 +19,7 @@
     "react-dom": "19.2.8"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.6.4",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
