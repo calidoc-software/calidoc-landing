@@ -387,6 +387,8 @@ Reglas para no romper la separación:
 
 Scripts: `npm run lint` (ambos) · `lint:biome` · `lint:eslint` · `format` · `fix` (autofix de ambos) · `typecheck`.
 
+**CI:** `.github/workflows/lint.yml` corre `lint:biome` y `lint:eslint` en todo Pull Request hacia `develop`. Biome solo verifica (no reescribe archivos): si falla por formato, ejecutar `npm run fix` en local y volver a commitear.
+
 ---
 
 ## 11. Commits
@@ -439,7 +441,7 @@ Este archivo se irá ampliando. Aún pendientes de documentar aquí:
 
 - [ ] Convenciones de nombrado de componentes (PascalCase, sufijos, co-ubicación de estilos)
 - [ ] Seguridad adicional (manejo de datos de formularios, rate limiting del buscador y del login/OTP)
-- [ ] Convenciones de PR y checks de CI para este repo (Vercel preview deployments)
+- [ ] Convenciones de PR y checks de CI adicionales (typecheck, build, tests; hoy solo corre lint)
 - [ ] Accesibilidad: checklist WCAG AA específico (contraste ya pendiente de validar en Notion)
 - [ ] Contrato exacto de los endpoints de auth de calidoc-api (`/auth/login`, `/auth/refresh`, `/auth/google-login`) — shape de request/response, códigos de error
 - [ ] Manejo de expiración de sesión en UI (aviso al paciente antes de que expire, no solo al fallar una request)
