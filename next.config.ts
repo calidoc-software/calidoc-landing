@@ -14,7 +14,7 @@ const csp = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline' ${culqi}${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
-  `img-src 'self' blob: data: ${culqi}`,
+  `img-src 'self' blob: data: ${apiOrigin} ${culqi}`,
   "font-src 'self'",
   `connect-src 'self' ${apiOrigin} ${culqi}`,
   `frame-src ${culqi}`,
@@ -37,6 +37,9 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // Sin optimizador de Vercel (/_next/image) para no pagar por transformaciones: las imágenes se
+  // optimizan a mano antes de subirlas.
+  images: { unoptimized: true },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
