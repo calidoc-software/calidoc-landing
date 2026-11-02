@@ -1,7 +1,45 @@
 import type { NextConfig } from "next";
+// Import relativo: next.config.ts se carga fuera del bundler y no resuelve el alias "@/".
+import { env } from "./src/shared/lib/env";
+
+const isDev = process.env.NODE_ENV === "development";
+
+const apiOrigin = new URL(env.NEXT_PUBLIC_API_BASE_URL).origin;
+// Culqi (pasarela de pago): script del checkout, iframe y llamadas de tokenización.
+const culqi = "https://*.culqi.com";
+
+// CSP sin nonces para conservar SSG/ISR (un nonce obliga a renderizar todo de forma dinámica).
+// Cada origen de terceros nuevo (analytics, mapas, CDN de imágenes…) se agrega aquí de forma explícita.
+const csp = [
+  "default-src 'self'",
+  `script-src 'self' 'unsafe-inline' ${culqi}${isDev ? " 'unsafe-eval'" : ""}`,
+  "style-src 'self' 'unsafe-inline'",
+  `img-src 'self' blob: data: ${culqi}`,
+  "font-src 'self'",
+  `connect-src 'self' ${apiOrigin} ${culqi}`,
+  `frame-src ${culqi}`,
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'none'",
+  // En desarrollo rompería las llamadas http://localhost hacia la API local.
+  ...(isDev ? [] : ["upgrade-insecure-requests"]),
+].join("; ");
+
+const securityHeaders = [
+  { key: "Content-Security-Policy", value: csp },
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "X-Frame-Options", value: "DENY" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+  { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" },
+];
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  poweredByHeader: false,
+  async headers() {
+    return [{ source: "/:path*", headers: securityHeaders }];
+  },
 };
 
 export default nextConfig;
