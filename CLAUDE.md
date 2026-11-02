@@ -356,6 +356,16 @@ Como el estado real vive en tu API .NET (no en una base de datos de Next.js), la
 
 En `shared/lib/api/`, el cliente centralizado adjunta el `accessToken` vigente (obtenido de la sesión del servidor) en el header `Authorization`. Ante un 401, el cliente no reintenta indefinidamente — delega en el flujo de refresh ya descrito en el `jwt` callback.
 
+**Contrato de respuestas de calidoc-api** (implementado en `shared/lib/api/`, import desde `@/shared/lib/api`):
+- **2xx** → el recurso tal cual, sin envoltorio (`api.get<Doctor[]>("/Doctors/public")`). Las rutas son relativas a `/api/v1`.
+- **Error (4xx/5xx o red)** → `apiFetch`/`api.*` lanzan `ApiError` con `status`, `code`, `title`, `detail`, `instance`, `type`, `metadata`, `fieldErrors` y `traceId`. El `code` es lo que el componente usa para decidir qué mostrar (`error.is("NOT_FOUND")`); solo se maneja por código donde el producto lo requiere, el resto cae al error genérico (`error.tsx`).
+- **`code` es un string abierto**: el backend puede mandar cualquier código, incluidos los de validaciones custom, y 401/403 también llegan como ProblemDetails con `code`. El `code` del backend siempre manda. `ClientErrorCode` solo lista los códigos genéricos de respaldo que el cliente inventa cuando la respuesta no trae uno: `NETWORK_ERROR` y `TIMEOUT` (sin respuesta), `UNAUTHORIZED`/`FORBIDDEN` (401/403 sin cuerpo útil, p. ej. un proxy), `VALIDATION_ERROR` (400 de model binding de ASP.NET con `errors: { Campo: [mensajes] }`, que va a `fieldErrors`) y `HTTP_<status>` en cualquier otro caso.
+- **Server Actions**: una instancia de `ApiError` no cruza al cliente. Se envuelve la llamada con `tryApi(...)`, que devuelve `{ ok: true, data } | { ok: false, error }` (objeto plano serializable) para que el Client Component ramifique por `error.code` o pinte `error.fieldErrors` en el formulario.
+- **Los códigos de negocio los declara cada feature** (p. ej. `features/booking/` define las constantes de los `code` que maneja); `shared/` solo conoce los códigos genéricos.
+- Reintentos con espera solo en `GET` ante red, timeout, 502, 503 y 504; timeout por defecto de 10 s. Nunca se reintenta un `POST/PUT/PATCH/DELETE`.
+- El `token` se pasa solo desde código de servidor; los endpoints públicos se llaman sin token y con caché (`next: { revalidate, tags }`), los privados sin caché.
+- El cliente tipa la respuesta con un genérico pero **no la valida en runtime**: la validación (zod) ocurre en los `mappers` del feature cuando el dato es crítico.
+
 ### Protección de rutas
 
 El `layout.tsx` de `(booking)` valida la sesión del lado del servidor (o vía `proxy.ts` con `auth()` de Auth.js — en Next 16 `middleware.ts` se renombró a `proxy.ts`; solo para chequeos optimistas leyendo la cookie, nunca consultas a base de datos ni la API) y redirige a `(auth)/login` si no hay sesión válida — el resto del sitio (`(marketing)`) es público por defecto.
