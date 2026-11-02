@@ -1,0 +1,32 @@
+export default {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          50: '#E6F9FD', 100: '#C0F0FA', 200: '#85E3F5', 300: '#4DD5EF',
+          400: '#1CC5E8', 500: '#00B7E2', 600: '#0092B8', 700: '#006F8C',
+          800: '#004D61', 900: '#002E3A',
+        },
+        secondary: {
+          50: '#EAF8F1', 100: '#C9EEDD', 200: '#94DDBB', 300: '#5FCB99',
+          400: '#3EB682', 500: '#2C9B6B', 600: '#237C56', 700: '#1B5F42',
+          800: '#13432E', 900: '#0B2A1D',
+        },
+        accent: { 400: '#F0A85C', 500: '#E1873D', 600: '#C06B26' },
+        dark: {
+          bg: '#02192C', surface: '#0A2740', surface2: '#123349',
+          border: '#1D4258', text: '#EAF4F7',
+        },
+        neutral: {
+          50: '#F7FAFB', 100: '#EDF2F4', 200: '#DCE4E8', 300: '#C2CDD3',
+          400: '#94A3AC', 500: '#65767F', 700: '#37424A', 900: '#02192C',
+        },
+      },
+      fontFamily: {
+        heading: ['"Baloo 2"', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+      },
+    },
+  },
+}
