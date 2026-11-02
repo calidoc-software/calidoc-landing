@@ -389,13 +389,45 @@ Scripts: `npm run lint` (ambos) · `lint:biome` · `lint:eslint` · `format` · 
 
 ---
 
-## 11. Secciones a definir en próximas sesiones
+## 11. Commits
+
+**Los mensajes de commit se escriben siempre en inglés** (asunto y cuerpo), aunque el resto de la documentación del repo esté en español. Siguen la convención **Conventional Commits**:
+
+```
+<type>(<scope>): <subject>
+
+<body, opcional>
+```
+
+- **type** (obligatorio): `feat` (funcionalidad nueva) · `fix` (corrección de bug) · `refactor` (cambio interno sin alterar comportamiento) · `style` (formato, sin cambio de lógica) · `docs` · `test` · `perf` · `build` (dependencias, empaquetado) · `ci` · `chore` (tareas de mantenimiento, configuración) · `revert`.
+- **scope** (opcional, minúsculas): el feature o área afectada, p. ej. `booking`, `doctors`, `specialties`, `auth`, `ui`, `seo`, `lint`, `deps`.
+- **subject**: en imperativo y minúscula inicial (`add`, `fix`, `move`; no `added` ni `adds`), sin punto final, idealmente ≤ 72 caracteres. Describe el qué, no el cómo.
+- **body** (cuando el cambio no es obvio): explica el porqué y el contexto, no repite el diff. Líneas de ≤ 100 caracteres.
+- **Cambio incompatible**: `!` después del tipo/scope (`feat(api)!: ...`) y un pie `BREAKING CHANGE: ...`.
+- Un commit = un cambio lógico. No mezclar refactor, formato y funcionalidad en el mismo commit.
+- Antes de commitear debe pasar `npm run lint` y `npm run typecheck`.
+
+Ejemplos:
+
+```
+feat(booking): add time slot picker to appointment flow
+fix(doctors): prevent crash when profile has no photo
+refactor: move payments module into features
+chore(lint): configure Biome and ESLint with separate responsibilities
+docs: document dependency rules in CLAUDE.md
+```
+
+Los commits previos a esta regla en español no se reescriben.
+
+---
+
+## 12. Secciones a definir en próximas sesiones
 
 Este archivo se irá ampliando. Aún pendientes de documentar aquí:
 
 - [ ] Convenciones de nombrado de componentes (PascalCase, sufijos, co-ubicación de estilos)
 - [ ] Seguridad adicional (headers, CSP, manejo de datos de formularios, rate limiting del buscador y del login/OTP)
-- [ ] Convenciones de commits/PR y checks de CI para este repo (Vercel preview deployments)
+- [ ] Convenciones de PR y checks de CI para este repo (Vercel preview deployments)
 - [ ] Accesibilidad: checklist WCAG AA específico (contraste ya pendiente de validar en Notion)
 - [ ] Contrato exacto de los endpoints de auth de calidoc-api (`/auth/login`, `/auth/refresh`, `/auth/google-login`) — shape de request/response, códigos de error
 - [ ] Manejo de expiración de sesión en UI (aviso al paciente antes de que expire, no solo al fallar una request)
