@@ -70,6 +70,6 @@
 }
 
 @theme inline {
-  --font-heading: var(--font-baloo), ui-sans-serif, sans-serif;
+  --font-heading: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
 }

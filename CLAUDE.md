@@ -239,9 +239,8 @@ Convención de hover/active: **hover aclara (400), active oscurece (600)** — n
 
 ### Tipografía
 
-- **Headings:** `Baloo 2` — geométrica redondeada, coherente con el isotipo
-- **Body/UI:** `Plus Jakarta Sans` — alta legibilidad en textos largos
-- Cargar ambas vía `next/font/google` (no CDN externo) para evitar layout shift y mejorar performance
+- **Una sola familia: `Plus Jakarta Sans`** para headings y body/UI. Headings en peso 800 con `letter-spacing: -0.035em` e interlineado 1.1; body en peso 500 con interlineado 1.6. Se descartó `Baloo 2` (redondeada, resta seriedad en salud) e Inter (default genérico)
+- Cargarla vía `next/font/google` (no CDN externo) para evitar layout shift y mejorar performance
 - Nunca usar Inter ni una sans genérica de sistema como default
 
 ### Estilo de imágenes
@@ -255,8 +254,8 @@ Convención de hover/active: **hover aclara (400), active oscurece (600)** — n
 ### Dónde viven los tokens
 
 - `src/styles/theme.css` es la **única fuente** de tokens (`@theme`): paleta, semánticos, radios, sombras (`shadow-card`, `shadow-raised`, `shadow-glow`), easing (`ease-out-soft`) y fuentes. Borra la paleta por defecto de Tailwind (`--color-*: initial`), así que solo existen los colores de marca.
-- `src/styles/globals.css` importa Tailwind y el tema, y define la base: fondo `neutral-50`, texto `neutral-700`, headings en `font-heading` (Baloo 2), foco visible, `::selection`, `prefers-reduced-motion` y la utilidad `reveal` (scroll-driven, con `@supports`).
-- Las fuentes se cargan con `next/font/google` en `app/layout.tsx` y exponen `--font-baloo` y `--font-jakarta`.
+- `src/styles/globals.css` importa Tailwind y el tema, y define la base: fondo `neutral-50`, texto `neutral-700`, headings en `font-heading` (Plus Jakarta Sans 800, tracking ajustado), foco visible, `::selection`, `prefers-reduced-motion` y la utilidad `reveal` (scroll-driven, con `@supports`).
+- Las fuentes se cargan con `next/font/google` en `app/layout.tsx` y exponen `--font-jakarta`.
 - **Sin dark mode**: el sitio es solo claro. No hay `dark:` ni tokens `dark-*`. Si se reintroduce, se agrega con `@custom-variant dark`.
 - No existe `tailwind.config.js`; no volver a crearlo.
 

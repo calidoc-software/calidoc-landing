@@ -12,6 +12,7 @@
     background-color: var(--color-neutral-50);
     color: var(--color-neutral-700);
     font-family: var(--font-sans);
+    font-weight: 500;
     line-height: 1.6;
     text-rendering: optimizeLegibility;
   }
@@ -22,7 +23,9 @@
   h4 {
     color: var(--color-neutral-900);
     font-family: var(--font-heading);
-    line-height: 1.15;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1.1;
     text-wrap: balance;
   }
 

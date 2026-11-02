@@ -32,9 +32,7 @@ export default function Home() {
           Sitio en construcción
         </span>
 
-        <h1 className="text-4xl font-bold tracking-tight text-[#0f2b33] sm:text-5xl">
-          Muy pronto disponible
-        </h1>
+        <h1 className="text-4xl font-bold text-[#0f2b33] sm:text-5xl">Muy pronto disponible</h1>
 
         <p className="max-w-md text-base leading-7 text-[#3f5b63] sm:text-lg">
           Estamos construyendo <strong>Calidoc</strong>, la plataforma de telemedicina donde
