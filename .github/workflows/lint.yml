@@ -1,0 +1,33 @@
+name: Lint
+
+on:
+  pull_request:
+    branches: [develop]
+
+concurrency:
+  group: lint-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      # Formato, imports y reglas de código limpio (solo verifica, no modifica archivos)
+      - name: Biome
+        run: npm run lint:biome
+
+      # Reglas de Next/React, TypeScript y límites de arquitectura
+      - name: ESLint
+        run: npm run lint:eslint
