@@ -122,7 +122,7 @@ src/
 │
 ├── content/                              # MDX para blog/landing, si aplica
 ├── styles/                               # globals.css, tokens
-└── middleware.ts                         # guard de sesión para (booking)
+└── proxy.ts                              # (ex middleware, Next 16) chequeo optimista de sesión para (booking)
 ```
 
 ### Por qué así
@@ -334,7 +334,7 @@ Recordatorio de alcance (sección 2): esta auth es **solo del paciente**, exclus
 Es la opción correcta aquí porque:
 - Soporte nativo de App Router (Route Handler en `app/api/auth/[...nextauth]/route.ts`)
 - Permite combinar un provider `Credentials` (para tu API .NET) y `Google` en la misma configuración de sesión, sin lógica duplicada
-- Middleware de protección de rutas listo para usar en el grupo `(booking)`
+- Protección de rutas del grupo `(booking)` con `proxy.ts` (antes `middleware.ts`) o validación en el layout
 
 ### Principio de diseño: la API .NET es la única fuente de verdad de la sesión
 
@@ -358,7 +358,7 @@ En `shared/lib/api/`, el cliente centralizado adjunta el `accessToken` vigente (
 
 ### Protección de rutas
 
-El `layout.tsx` de `(booking)` valida la sesión del lado del servidor (o vía `middleware.ts` con `auth()` de Auth.js) y redirige a `(auth)/login` si no hay sesión válida — el resto del sitio (`(marketing)`) es público por defecto.
+El `layout.tsx` de `(booking)` valida la sesión del lado del servidor (o vía `proxy.ts` con `auth()` de Auth.js — en Next 16 `middleware.ts` se renombró a `proxy.ts`; solo para chequeos optimistas leyendo la cookie, nunca consultas a base de datos ni la API) y redirige a `(auth)/login` si no hay sesión válida — el resto del sitio (`(marketing)`) es público por defecto.
 
 ### Variables de entorno esperadas
 
