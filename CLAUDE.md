@@ -44,7 +44,7 @@ Lo que SÍ vive en este repo:
   - Home, especialidades, perfiles de doctores → Server Components + SSG/ISR (rápido, indexable, mínimo JS)
   - Buscador/listado de doctores → Server Component para el listado inicial + Client Component solo para filtros interactivos
   - Flujo de agendar cita → Client Components (formulario, calendario) dentro del grupo de rutas de booking
-- **Estilos:** Tailwind CSS con `tailwind.config.js` custom (ver sección 5) — nunca usar la paleta default de Tailwind (`slate`, `blue-500`, etc.)
+- **Estilos:** Tailwind CSS con `tailwind.config.js` custom (ver sección 7) — nunca usar la paleta default de Tailwind (`slate`, `blue-500`, etc.)
 - **Validación de formularios:** Zod
 - **Auth del paciente (solo para agendar/mis-citas):** ligera, tipo magic link/OTP — no es el sistema de permisos de la plataforma completa
 
@@ -52,11 +52,11 @@ Principio general del proyecto (aplica también a este repo): **YAGNI** — no c
 
 ---
 
-## 4. Estructura de carpetas
+## 4. Estructura de carpetas y arquitectura
 
 ```
 src/
-├── app/
+├── app/                                  # SOLO ruteo: pages delgadas, layouts, metadata
 │   ├── (marketing)/                      # rutas públicas — sin sesión
 │   │   ├── page.tsx                      # Home
 │   │   ├── especialidades/
@@ -65,61 +65,96 @@ src/
 │   │   │       ├── page.tsx              # ficha de especialidad (SSG/ISR)
 │   │   │       └── opengraph-image.tsx
 │   │   ├── doctores/
-│   │   │   ├── page.tsx                  # listado/buscador de doctores (transaccional)
-│   │   │   └── [slug]/
-│   │   │       └── page.tsx              # perfil del doctor (SSG/ISR)
+│   │   │   ├── page.tsx                  # listado/buscador (transaccional)
+│   │   │   └── [slug]/page.tsx           # perfil del doctor (SSG/ISR)
 │   │   ├── nosotros/page.tsx
 │   │   ├── blog/
 │   │   │   ├── page.tsx
 │   │   │   └── [slug]/page.tsx
-│   │   └── layout.tsx                    # header/footer públicos
+│   │   └── layout.tsx                    # Header/Footer públicos (de shared/layout)
 │   │
-│   ├── (booking)/                        # flujo de agendar cita — requiere login simple del paciente
+│   ├── (booking)/                        # flujo de agendar — requiere sesión del paciente
 │   │   ├── agendar/
 │   │   │   ├── [doctorSlug]/page.tsx     # selección de fecha/hora
 │   │   │   └── confirmacion/page.tsx
 │   │   ├── mis-citas/page.tsx            # único contenido "privado" de este repo
-│   │   └── layout.tsx                    # valida sesión simple del paciente
+│   │   └── layout.tsx                    # valida sesión del paciente
 │   │
 │   ├── (auth)/
 │   │   ├── login/page.tsx
 │   │   └── verificar/page.tsx            # magic link / OTP
 │   │
-│   ├── api/                              # Route Handlers (webhooks, revalidate, etc.)
-│   ├── sitemap.ts                        # generado dinámicamente
-│   ├── robots.ts
-│   └── layout.tsx                        # metadata base, fonts, providers
+│   ├── api/
+│   │   ├── auth/[...nextauth]/route.ts   # Auth.js
+│   │   └── revalidate/route.ts           # ISR on-demand (webhook desde calidoc-api)
+│   ├── layout.tsx                        # metadata base, fonts, providers
+│   ├── sitemap.ts · robots.ts
+│   └── error.tsx · not-found.tsx
 │
-├── modules/                              # lógica y componentes por dominio de contenido
+├── features/                             # un dominio de UI = una carpeta autocontenida
 │   ├── specialties/
+│   │   ├── api/                          # fetchers server-only hacia calidoc-api
+│   │   ├── actions/                      # Server Actions (mutaciones)
 │   │   ├── components/                   # SpecialtyCard, SpecialtyFilter
-│   │   ├── api/                          # getSpecialties(), getSpecialtyBySlug()
-│   │   └── types.ts
-│   ├── doctors/
-│   │   ├── components/                   # DoctorCard, DoctorProfileHeader, ReviewsList
-│   │   ├── api/
-│   │   └── types.ts
-│   └── booking/
-│       ├── components/                   # Calendar, TimeSlotPicker, BookingSummary
-│       ├── api/                          # createAppointment(), useAvailability()
-│       ├── schemas/                      # zod
-│       └── hooks/
+│   │   ├── hooks/                        # solo client
+│   │   ├── mappers/                      # DTO de la API → modelo de vista
+│   │   ├── schemas/                      # zod (forms y validación)
+│   │   ├── types.ts
+│   │   ├── index.ts                      # API pública client-safe (componentes, tipos, schemas)
+│   │   └── server.ts                     # API pública server-only (fetchers, actions)
+│   ├── doctors/                          # DoctorCard, DoctorProfileHeader, ReviewsList
+│   ├── booking/                          # Calendar, TimeSlotPicker, BookingSummary, useAvailability
+│   ├── auth/                             # formularios login/OTP, actions de sesión
+│   └── blog/                             # solo si el blog consume MDX/CMS (ver content/)
 │
-├── shared/
-│   ├── ui/                               # Design system: Button, Card, Badge...
-│   ├── seo/                              # helpers: generateMetadata(), JSON-LD builders
-│   ├── auth/                             # session.ts (simple, solo para booking/mis-citas)
-│   ├── api/                              # cliente HTTP centralizado hacia calidoc-api
-│   └── lib/                              # utils, formatters (fechas, etc.)
+├── shared/                               # nada de negocio, reutilizable por todos
+│   ├── ui/                               # design system (Button, Card, Badge, inputs…)
+│   ├── layout/                           # Header, Footer, Container
+│   ├── lib/
+│   │   ├── api/                          # cliente HTTP, manejo de errores, auth header
+│   │   ├── seo/                          # helpers generateMetadata(), JSON-LD builders
+│   │   ├── auth/                         # config de Auth.js, helpers de sesión
+│   │   ├── utils/                        # formatters (fechas, moneda), cn()
+│   │   └── env.ts                        # variables de entorno validadas con zod
+│   ├── hooks/
+│   ├── config/                           # constantes, rutas (routes.ts), site config
+│   └── types/
 │
-└── content/                               # MDX para blog/landing content, si aplica
+├── content/                              # MDX para blog/landing, si aplica
+├── styles/                               # globals.css, tokens
+└── middleware.ts                         # guard de sesión para (booking)
 ```
 
 ### Por qué así
 
-- **Route Groups separan mundos**: `(marketing)`, `(booking)` y `(auth)` no afectan la URL pero permiten `layout.tsx` distintos (header público vs. flujo de reserva) y aplicar el guard de sesión solo donde hace falta — nada de proteger todo el sitio por defecto.
-- **`app/` organizado por tipo de página, `modules/` por dominio**: el árbol de `app/` refleja el sitemap real (información arquitectónica valiosa en un sitio de contenido); la lógica reutilizable (fetch de datos, componentes de UI del dominio) vive en `modules/`, importada por cada página.
-- **`shared/ui` es el design system** — todo componente de la sección 5 (Button, Card, Badge, inputs) vive ahí, nunca duplicado dentro de un módulo.
+- **Route Groups separan mundos**: `(marketing)`, `(booking)` y `(auth)` no afectan la URL pero permiten `layout.tsx` distintos y aplicar el guard de sesión solo donde hace falta — nada de proteger todo el sitio por defecto.
+- **`app/` solo rutea**: refleja el sitemap real. Una `page.tsx` hace como máximo: leer params → llamar un fetcher del feature → componer componentes → exportar `generateMetadata`/`generateStaticParams`. Sin lógica de negocio ni JSX extenso.
+- **`features/` por dominio, `shared/` sin negocio**: todo lo que conoce el concepto "doctor", "especialidad" o "cita" vive en su feature. Si no conoce el dominio, va a `shared/`.
+- **`shared/ui` es el design system** — todo componente de la sección 7 vive ahí, nunca duplicado dentro de un feature.
+
+### Reglas de dependencia (no negociables)
+
+Flujo permitido: `app → features → shared`. Nunca al revés.
+
+1. `shared/` **no importa** de `features/` ni de `app/`.
+2. Un feature **no importa** de otro feature, salvo vía su API pública (`@/features/x` o `@/features/x/server`), nunca por rutas internas (`@/features/x/components/...`). Si dos features se acoplan mucho, evaluar si lo común sube a `shared/` o si son un solo feature.
+3. `app/` importa de features solo por su API pública.
+4. **Dos puntos de entrada por feature** para no mezclar fronteras server/client en un barrel:
+   - `index.ts` → client-safe: componentes, tipos, schemas.
+   - `server.ts` → empieza con `import 'server-only'`: fetchers y Server Actions.
+5. Los fetchers (`api/`) devuelven **modelos de vista** (ya pasados por `mappers/`); los DTO crudos de calidoc-api no salen del feature.
+6. Todo acceso HTTP a calidoc-api pasa por `shared/lib/api`; ningún componente hace `fetch` directo a la API.
+7. Variables de entorno solo vía `shared/lib/env.ts` (validadas con zod), nunca `process.env` suelto.
+8. Alias de import `@/*` → `src/*`; sin rutas relativas que suban más de un nivel (`../../`).
+9. Estas reglas se hacen cumplir con ESLint (`no-restricted-imports` o `eslint-plugin-boundaries`), no solo por convención.
+
+### Convenciones
+
+- **YAGNI en carpetas**: un feature solo crea las subcarpetas que usa hoy (`hooks/`, `actions/`, `mappers/`…). No se crean vacías "por si acaso".
+- **Server Component por defecto**; `'use client'` solo en el componente hoja que lo necesita.
+- **Co-ubicación**: un componente usado por un solo feature vive en ese feature; solo sube a `shared/ui` cuando lo usa un segundo dominio.
+- **Mutaciones** = Server Actions en `actions/` (validan con el schema zod del feature antes de llamar a la API).
+- **Tests** junto al archivo (`Foo.test.tsx`).
 
 ---
 
@@ -190,15 +225,15 @@ Cada bloque de contenido (feature, testimonio, card de especialidad) se revela a
 
 ### Uso de la escala de un color (aplica a primary/secondary/accent)
 
-| Rango | Uso |
-|---|---|
-| 50–100 | Fondos tintados sutiles (banner, badge, card seleccionada) |
-| 200–300 | Bordes con estado (focus de input, card activa) |
-| 400 | Hover (se aclara) |
-| **500** | Estado base / acción principal |
-| 600 | Active/pressed (se oscurece) — también texto sobre fondo 50/100 para contraste AA |
-| 700 | Hover en dark mode |
-| 800–900 | Gradientes, sombras coloreadas, variantes dark-mode-only |
+| Rango   | Uso                                                                               |
+| ------- | --------------------------------------------------------------------------------- |
+| 50–100  | Fondos tintados sutiles (banner, badge, card seleccionada)                        |
+| 200–300 | Bordes con estado (focus de input, card activa)                                   |
+| 400     | Hover (se aclara)                                                                 |
+| **500** | Estado base / acción principal                                                    |
+| 600     | Active/pressed (se oscurece) — también texto sobre fondo 50/100 para contraste AA |
+| 700     | Hover en dark mode                                                                |
+| 800–900 | Gradientes, sombras coloreadas, variantes dark-mode-only                          |
 
 Convención de hover/active: **hover aclara (400), active oscurece (600)** — nunca al revés.
 
@@ -224,23 +259,60 @@ Convención de hover/active: **hover aclara (400), active oscurece (600)** — n
 
 ```js
 export default {
-  darkMode: 'class',
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
-        primary: { 50:'#E6F9FD',100:'#C0F0FA',200:'#85E3F5',300:'#4DD5EF',400:'#1CC5E8',500:'#00B7E2',600:'#0092B8',700:'#006F8C',800:'#004D61',900:'#002E3A' },
-        secondary: { 50:'#EAF8F1',100:'#C9EEDD',200:'#94DDBB',300:'#5FCB99',400:'#3EB682',500:'#2C9B6B',600:'#237C56',700:'#1B5F42',800:'#13432E',900:'#0B2A1D' },
-        accent: { 400:'#F0A85C', 500:'#E1873D', 600:'#C06B26' },
-        dark: { bg:'#02192C', surface:'#0A2740', surface2:'#123349', border:'#1D4258', text:'#EAF4F7' },
-        neutral: { 50:'#F7FAFB',100:'#EDF2F4',200:'#DCE4E8',300:'#C2CDD3',400:'#94A3AC',500:'#65767F',700:'#37424A',900:'#02192C' },
+        primary: {
+          50: "#E6F9FD",
+          100: "#C0F0FA",
+          200: "#85E3F5",
+          300: "#4DD5EF",
+          400: "#1CC5E8",
+          500: "#00B7E2",
+          600: "#0092B8",
+          700: "#006F8C",
+          800: "#004D61",
+          900: "#002E3A",
+        },
+        secondary: {
+          50: "#EAF8F1",
+          100: "#C9EEDD",
+          200: "#94DDBB",
+          300: "#5FCB99",
+          400: "#3EB682",
+          500: "#2C9B6B",
+          600: "#237C56",
+          700: "#1B5F42",
+          800: "#13432E",
+          900: "#0B2A1D",
+        },
+        accent: { 400: "#F0A85C", 500: "#E1873D", 600: "#C06B26" },
+        dark: {
+          bg: "#02192C",
+          surface: "#0A2740",
+          surface2: "#123349",
+          border: "#1D4258",
+          text: "#EAF4F7",
+        },
+        neutral: {
+          50: "#F7FAFB",
+          100: "#EDF2F4",
+          200: "#DCE4E8",
+          300: "#C2CDD3",
+          400: "#94A3AC",
+          500: "#65767F",
+          700: "#37424A",
+          900: "#02192C",
+        },
       },
       fontFamily: {
-        heading: ['"Baloo 2"', 'sans-serif'],
-        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+        heading: ['"Baloo 2"', "sans-serif"],
+        sans: ['"Plus Jakarta Sans"', "sans-serif"],
       },
     },
   },
-}
+};
 ```
 
 ---
@@ -282,7 +354,7 @@ Como el estado real vive en tu API .NET (no en una base de datos de Next.js), la
 
 ### Cliente HTTP hacia la API de Calidoc
 
-En `shared/api/`, el cliente centralizado adjunta el `accessToken` vigente (obtenido de la sesión del servidor) en el header `Authorization`. Ante un 401, el cliente no reintenta indefinidamente — delega en el flujo de refresh ya descrito en el `jwt` callback.
+En `shared/lib/api/`, el cliente centralizado adjunta el `accessToken` vigente (obtenido de la sesión del servidor) en el header `Authorization`. Ante un 401, el cliente no reintenta indefinidamente — delega en el flujo de refresh ya descrito en el `jwt` callback.
 
 ### Protección de rutas
 
@@ -299,7 +371,25 @@ NEXT_PUBLIC_API_BASE_URL=        # calidoc-api
 
 ---
 
-## 10. Secciones a definir en próximas sesiones
+## 10. Linting y formato (Biome + ESLint)
+
+Dos herramientas, cada una con su responsabilidad. **No se pisan**: lo que una cubre, la otra lo tiene apagado.
+
+| Herramienta | Responsable de                                                                                                                                                | Config              |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| **Biome**   | Formato (JS/TS/JSX, CSS con directivas Tailwind, HTML, JSON), indentación (2 espacios, 100 cols, comillas dobles, `;`), orden de imports, código limpio, a11y | `biome.json`        |
+| **ESLint**  | Reglas de Next/React (`core-web-vitals`, hooks), TypeScript (unused vars, `any`) y límites de arquitectura (`no-restricted-imports`, sección 4)               | `eslint.config.mjs` |
+
+Reglas para no romper la separación:
+- ESLint **nunca** define reglas de formato/estilo (nada de prettier ni stylistic).
+- Si una regla existe en ambos, se apaga en Biome (ya apagadas: `useExhaustiveDependencies`, `useHookAtTopLevel`, `noUnusedVariables`, `noUnusedImports`, `noImgElement`).
+- Los comentarios de encabezado de `eslint.config.mjs` documentan este reparto.
+
+Scripts: `npm run lint` (ambos) · `lint:biome` · `lint:eslint` · `format` · `fix` (autofix de ambos) · `typecheck`.
+
+---
+
+## 11. Secciones a definir en próximas sesiones
 
 Este archivo se irá ampliando. Aún pendientes de documentar aquí:
 
