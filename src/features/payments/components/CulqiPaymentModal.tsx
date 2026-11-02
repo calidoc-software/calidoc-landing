@@ -69,7 +69,9 @@ export function CulqiPaymentModal({ open, summary, email, savedCards, onPay, onC
 
   const defaultChoice = (savedCards.find((c) => c.isDefault) ?? savedCards[0])?.id ?? NEW_CARD;
   const selected =
-    savedCards.some((c) => c.id === choice) || choice === NEW_CARD ? choice! : defaultChoice;
+    choice !== null && (choice === NEW_CARD || savedCards.some((c) => c.id === choice))
+      ? choice
+      : defaultChoice;
   const payingNewCard = selected === NEW_CARD;
   const select = (id: string) => {
     setError(null);
