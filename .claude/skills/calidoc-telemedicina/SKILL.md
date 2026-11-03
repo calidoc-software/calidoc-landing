@@ -54,7 +54,7 @@ Otras skills de diseño (impeccable, frontend-design, Emil Kowalski, etc.) propo
 
 ## Movimiento
 
-Mínimo y con propósito (CLAUDE.md sección 6): reveal sutil al hacer scroll (fade + 12–16 px, `ease-out`, 400–600 ms), transición del header sticky, feedback de botones. Nada de loops, autoplay ni animaciones en listados, resultados ni formularios. Si se duda entre animar o no, no se anima.
+Mínimo y con propósito (CLAUDE.md sección 6): reveal sutil al hacer scroll (fade + 12–16 px, `ease-out`, 400–600 ms), transición del header sticky, feedback de botones. Nada de autoplay ni animaciones en listados, resultados ni formularios. Los loops solo se admiten como motion ambiental suave sobre elementos decorativos, con los límites de CLAUDE.md sección 6 (≤ 8 px, ciclo ≥ 6 s, 2–3 elementos como máximo, apagado con reduced-motion). Si se duda entre animar o no, no se anima.
 
 ## Estados que no pueden faltar
 

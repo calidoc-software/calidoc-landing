@@ -180,14 +180,15 @@ Principio rector: **90% del sitio es una interfaz limpia, blanca/neutral, funcio
 
 ### Reglas duras (no negociables sin discutirlo explícitamente)
 
-- **NO** aplicar `backdrop-filter: blur()` en más de 1–2 elementos visibles simultáneamente en toda la página (el header sticky cuenta como uno).
+- **NO** aplicar `backdrop-filter: blur()` en más de 3 elementos en toda la página: el header sticky más 2 tarjetas flotantes del hero (la tarjeta restante del hero es sólida, sin blur). En la práctica rara vez coinciden en pantalla, porque al hacer scroll el header tapa el hero. Cualquier otro uso requiere discutirlo explícitamente.
 - **NO** usar imágenes de fondo (PNG/JPG) para gradientes — todo mesh/gradient del hero es `radial-gradient()`/`conic-gradient()` en CSS puro.
 - **NO** aplicar glass o gradiente a secciones completas de contenido largo (listados de doctores, resultados de búsqueda, formularios). Esas secciones son fondo sólido, plano, de máxima legibilidad.
 - **NO** usar librerías de animación pesadas (GSAP, Framer Motion completo) solo para scroll-reveal — usar CSS scroll-driven animations (`animation-timeline`) o `IntersectionObserver` nativo dentro de un Client Component ligero.
 - **NO** marcar un componente como `'use client'` por defecto — Server Component es la base; solo pasa a cliente lo que necesita estado, efectos o eventos (buscador, filtros, calendario, header sticky).
 - **NO** bloquear contenido detrás de JS — todo debe ser visible sin animar como fallback (progressive enhancement).
 - Todo motion debe respetar `prefers-reduced-motion: reduce`.
-- Máximo un elemento animado o con foco de atención por sección visible a la vez — cero autoplay de carrousels ni loops que compitan con la lectura.
+- Máximo un elemento con foco de atención por sección visible a la vez — cero autoplay de carrousels ni loops que compitan con la lectura.
+- Excepción permitida, **motion ambiental**: se admiten loops suaves que den vida a la página, solo si cumplen todo esto: (1) afectan únicamente a elementos **decorativos** (`aria-hidden`), nunca a texto que se debe leer, formularios, listados ni al CTA/buscador; (2) amplitud mínima (≤ 8 px de desplazamiento o ≤ 3 % de escala/opacidad) con `ease-in-out`; (3) duración ≥ 6 s por ciclo; (4) solo `transform`/`opacity`; (5) máximo 2–3 elementos animándose a la vez en el viewport, desfasados entre sí para que no se muevan al unísono; (6) se detienen con `prefers-reduced-motion: reduce`. Si el usuario nota el movimiento conscientemente, es demasiado.
 
 ### Reveal progresivo al hacer scroll
 
@@ -197,7 +198,7 @@ Cada bloque de contenido (feature, testimonio, card de especialidad) se revela a
 
 - Estado inicial (scroll = 0): transparente o fondo sólido simple, sin blur — integrado al hero.
 - Al despegarse del top: `backdrop-filter: blur(10-16px)`, fondo semi-transparente (`bg-white/70`), borde inferior 1px sutil (`neutral-200`). Transición 200–250ms, sin salto.
-- Este es uno de los 1–2 usos de glass presupuestados en toda la página. El estado de scroll se maneja en un Client Component mínimo (o `IntersectionObserver` sobre un sentinel), nunca con una librería completa de scroll.
+- Este es uno de los 3 usos de glass presupuestados en toda la página (junto con 2 tarjetas flotantes del hero). El estado de scroll se maneja en un Client Component mínimo (o `IntersectionObserver` sobre un sentinel), nunca con una librería completa de scroll.
 
 ---
 
@@ -205,8 +206,11 @@ Cada bloque de contenido (feature, testimonio, card de especialidad) se revela a
 
 ### Paleta — usar SIEMPRE estos tokens, nunca colores de Tailwind por defecto
 
-**Primario (celeste — acciones, links, interactivo):**
-`primary-50 #E6F9FD` · `100 #C0F0FA` · `200 #85E3F5` · `300 #4DD5EF` · `400 #1CC5E8` · **`500 #00B7E2` (base)** · `600 #0092B8` · `700 #006F8C` · `800 #004D61` · `900 #002E3A`
+**Primario (azul — acciones, links, interactivo):**
+`primary-50 #EFF6FF` · `100 #DBEAFE` · `200 #BFDBFE` · `300 #93C5FD` · `400 #3B82F6` · **`500 #2563EB` (base)** · `600 #1D4ED8` · `700 #1E40AF` · `800 #1E3A8A` · `900 #172554`. Texto sobre `primary-500`: blanco (contraste AA).
+
+**Terciario (celeste de marca — solo fondos y acentos sutiles, nunca acciones):**
+`tertiary-50 #E6F9FD` · `100 #C0F0FA` · `200 #85E3F5` · `300 #4DD5EF` · `400 #1CC5E8` · **`500 #00B7E2` (base)** · `600 #0092B8` · `700 #006F8C` · `800 #004D61` · `900 #002E3A`. Era el primario original; para revertir, intercambiar los nombres `primary`/`tertiary` en `theme.css` y volver a poner texto navy sobre `primary-500`.
 
 **Secundario (verde — confirmaciones, estados "disponible"):**
 `secondary-50 #EAF8F1` · `100 #C9EEDD` · `200 #94DDBB` · `300 #5FCB99` · `400 #3EB682` · **`500 #2C9B6B` (base)** · `600 #237C56` · `700 #1B5F42` · `800 #13432E` · `900 #0B2A1D`
@@ -220,7 +224,7 @@ Cada bloque de contenido (feature, testimonio, card de especialidad) se revela a
 **Semánticos (nunca reusar colores de marca para estados de UI, excepto donde se indica):**
 `success #16A34A` · `warning #E1873D` (reusa accent) · `error #E5484D` · `info primary-500`
 
-### Uso de la escala de un color (aplica a primary/secondary/accent)
+### Uso de la escala de un color (aplica a primary/secondary/tertiary/accent)
 
 | Rango   | Uso                                                                               |
 | ------- | --------------------------------------------------------------------------------- |
@@ -247,6 +251,7 @@ Convención de hover/active: **hover aclara (400), active oscurece (600)** — n
 
 - Ilustraciones custom en duotono con gradiente celeste→verde (hero, estados vacíos, onboarding) — nunca stock genérico tipo "doctor sonriendo con bata blanca"
 - Fotografía real obligatoria en perfiles de especialistas (no negociable para conversión en salud)
+- **Excepción temporal:** el hero usa una foto de stock de referencia (`public/images/hero-teleconsulta.webp`) mientras no exista fotografía propia. Debe reemplazarse por una foto real del equipo/pacientes antes del lanzamiento, y verificar la licencia de la imagen actual si llegara a publicarse.
 - Fotografía de apoyo (equipo/oficina): grading de color hacia navy/verde para coherencia de marca
 - Todas las imágenes vía `next/image` (lazy loading y dimensiones sin saltos de layout), con `priority` solo en el hero. El optimizador de Vercel está **desactivado** (`images.unoptimized` en `next.config.ts`) para no pagar por transformaciones: **la optimización es manual antes de subir el archivo**.
 - Checklist manual: exportar en WebP o AVIF (JPG solo si no hay alternativa), ancho máximo real de uso (≈ 2× el tamaño en pantalla; hero ≤ 1600 px), calidad 75–80, peso objetivo < 150 KB por imagen (hero < 250 KB), `width`/`height` siempre declarados y `sizes` donde la imagen sea fluida. Los SVG se sirven tal cual.
@@ -264,7 +269,7 @@ Convención de hover/active: **hover aclara (400), active oscurece (600)** — n
 ## 8. Arquitectura de información del home (estado actual)
 
 - **Orden de secciones:** Header → Hero (buscador) → Cómo funciona → Carousel de especialidades → Cards de propuesta de valor → CTA para doctores → Footer
-- Header CTA principal: "Agendar cita" (botón celeste `primary-500`). "¿Eres médico? Únete" es solo un link de bajo peso, no un botón
+- Header CTA principal: "Agendar cita" (botón azul `primary-500`). "¿Eres médico? Únete" es solo un link de bajo peso, no un botón
 - **Cero señales de tracción falsas**: sin contadores ni testimonios hasta que exista volumen real que los respalde — esto es una decisión de honestidad de marca, no un placeholder temporal a "arreglar después"
 
 ---
