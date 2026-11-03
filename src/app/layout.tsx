@@ -9,9 +9,9 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Calidoc — Muy pronto",
+  title: "Calidoc — Encuentra a tu médico ideal",
   description:
-    "Calidoc es la app de telemedicina donde encuentras todas las especialidades para atenderte de forma presencial o virtual. Muy pronto disponible.",
+    "Agenda consultas virtuales o presenciales con especialistas de confianza, de forma sencilla y rápida.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
