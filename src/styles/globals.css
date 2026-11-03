@@ -24,8 +24,8 @@
     color: var(--color-neutral-900);
     font-family: var(--font-heading);
     font-weight: 800;
-    letter-spacing: -0.035em;
-    line-height: 1.1;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
     text-wrap: balance;
   }
 
@@ -38,7 +38,7 @@
   }
 
   ::selection {
-    background-color: var(--color-primary-200);
+    background-color: var(--color-tertiary-200);
     color: var(--color-neutral-900);
   }
 
@@ -81,4 +81,11 @@
     animation-timeline: view();
     animation-range: entry 0% entry 40%;
   }
+}
+
+@utility bg-hero-soft {
+  background-color: var(--color-white);
+  background-image:
+    radial-gradient(60% 80% at 0% 100%, var(--color-tertiary-100) 0%, transparent 70%),
+    radial-gradient(45% 55% at 100% 0%, var(--color-tertiary-50) 0%, transparent 70%);
 }
