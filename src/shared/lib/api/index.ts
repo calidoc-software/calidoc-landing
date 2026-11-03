@@ -5,5 +5,6 @@ export {
   ClientErrorCode,
   isApiError,
 } from "./api-error";
+export { publicCache } from "./cache";
 export { type ApiRequestOptions, api, apiFetch } from "./client";
 export { type ApiResult, tryApi } from "./result";
