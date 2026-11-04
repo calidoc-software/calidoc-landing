@@ -20,7 +20,7 @@ const navLinks = [
 ];
 
 const navLinkStyles =
-  "rounded-md px-1 py-2 text-base font-bold text-neutral-900 transition-colors duration-200 hover:text-primary-600";
+  "rounded-md px-1 py-1.5 text-[0.9375rem] font-semibold text-neutral-700 transition-colors duration-200 hover:text-primary-600";
 
 export function Header() {
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -77,7 +77,7 @@ export function Header() {
         <Container className="flex h-20 items-center justify-between gap-8 py-3 lg:h-24">
           <Logo />
 
-          <nav aria-label="Principal" className="hidden items-center gap-10 md:flex">
+          <nav aria-label="Principal" className="hidden items-center gap-7 md:flex">
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href} className={navLinkStyles}>
                 {link.label}
