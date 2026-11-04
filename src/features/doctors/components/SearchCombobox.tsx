@@ -1,7 +1,7 @@
 "use client";
 
 import { Command } from "cmdk";
-import type { LucideIcon } from "lucide-react";
+import { Check, type LucideIcon } from "lucide-react";
 import { useState } from "react";
 
 export type SearchOption = { value: string; label: string };
@@ -99,12 +99,15 @@ export function SearchCombobox({
                     key={option.value}
                     value={option.value}
                     onSelect={() => handleSelect(option)}
-                    className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-neutral-900 data-[selected=true]:bg-tertiary-50"
+                    className="group flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-neutral-900 data-[selected=true]:bg-neutral-100"
                   >
-                    <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-tertiary-50 text-primary-600">
+                    <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-neutral-500 transition-colors duration-200 group-data-[selected=true]:bg-white">
                       <Icon size={15} />
                     </span>
                     {option.label}
+                    {option.value === selected && (
+                      <Check size={16} aria-hidden className="ml-auto shrink-0 text-neutral-500" />
+                    )}
                   </Command.Item>
                 ))
               )}

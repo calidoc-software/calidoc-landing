@@ -47,9 +47,9 @@ export function DoctorSearch({ specialties, cities = defaultCities }: DoctorSear
       >
         <div
           className={cn(
-            "flex flex-col gap-4 bg-white p-4 transition-[border-radius] duration-300 lg:flex-row lg:items-center lg:gap-5 lg:py-2 lg:pr-2 lg:pl-6",
+            "flex flex-col gap-4 border border-neutral-200 bg-white p-5 transition-[border-radius,border-color] duration-300 focus-within:border-neutral-300 lg:flex-row lg:items-center lg:gap-6 lg:py-3.5 lg:pr-3.5 lg:pl-8",
             inPerson
-              ? "rounded-t-2xl rounded-b-none lg:rounded-t-[2rem]"
+              ? "rounded-t-2xl rounded-b-none border-b-neutral-200 lg:rounded-t-[2rem]"
               : "rounded-2xl lg:rounded-[2rem]",
           )}
         >
@@ -101,7 +101,7 @@ export function DoctorSearch({ specialties, cities = defaultCities }: DoctorSear
           )}
         >
           <div className={cn("min-h-0", inPerson ? "overflow-visible" : "overflow-hidden")}>
-            <div className="rounded-b-2xl border-t border-neutral-200 bg-white px-4 py-3 lg:rounded-b-[2rem] lg:px-6">
+            <div className="rounded-b-2xl border border-t-0 border-neutral-200 bg-white px-5 py-4 lg:rounded-b-[2rem] lg:px-8">
               <SearchCombobox
                 name="ciudad"
                 label="Ciudad"
