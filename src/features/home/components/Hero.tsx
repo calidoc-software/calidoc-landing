@@ -14,9 +14,13 @@ export function Hero({ search }: { search: ReactNode }) {
 
           <div className="relative z-10 px-6 pt-12 sm:px-12 sm:pt-16 lg:flex lg:flex-1 lg:flex-col lg:justify-center lg:px-20 lg:pt-8 lg:pb-16">
             <h1 id="hero-title" className="max-w-3xl text-4xl sm:text-6xl lg:max-w-2xl lg:text-6xl">
-              Encuentra a tu médico ideal, estés donde estés.
+              Encuentra a tu{" "}
+              <span className="box-decoration-clone bg-linear-to-r from-primary-600 via-primary-500 to-primary-400 bg-clip-text text-transparent">
+                médico ideal
+              </span>
+              , estés donde estés.
             </h1>
-            <p className="mt-8 max-w-xl text-lg leading-8 text-neutral-700 sm:text-xl sm:leading-9 lg:max-w-md">
+            <p className="mt-8 max-w-xl text-lg leading-7 text-neutral-700 sm:text-xl sm:leading-8 lg:max-w-md">
               Agenda consultas virtuales o presenciales con especialistas de confianza, de forma
               sencilla y rápida.
             </p>
