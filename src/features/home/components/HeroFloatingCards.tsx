@@ -54,10 +54,9 @@ export function HeroFloatingCards() {
       <FloatingCard
         icon={<ShieldCheck size={20} />}
         tone="accent"
-        surface="solid"
         title="Médico verificado"
         detail="Especialista de confianza"
-        className="top-[33%] left-[28%] animate-float"
+        className="top-[80%] left-[35%] animate-float"
       />
       <FloatingCard
         icon={<CalendarCheck size={20} />}

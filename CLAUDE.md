@@ -181,7 +181,7 @@ Principio rector: **90% del sitio es una interfaz limpia, blanca/neutral, funcio
 
 ### Reglas duras (no negociables sin discutirlo explícitamente)
 
-- **NO** aplicar `backdrop-filter: blur()` en más de 3 elementos en toda la página: el header sticky más 2 tarjetas flotantes del hero (la tarjeta restante del hero es sólida, sin blur). En la práctica rara vez coinciden en pantalla, porque al hacer scroll el header tapa el hero. Cualquier otro uso requiere discutirlo explícitamente.
+- **NO** aplicar `backdrop-filter: blur()` fuera de estos 4 elementos, que son los únicos con blur de toda la landing: el header sticky y las 3 tarjetas flotantes del hero. Dentro de una misma sección nunca hay más de 3 con blur (el hero tiene 3; el header no cuenta como parte de esa sección porque al hacer scroll tapa el hero). Los 4 son una excepción deliberada por ser una landing; todo lo demás es sólido. Cualquier otro uso requiere discutirlo explícitamente.
 - **NO** usar imágenes de fondo (PNG/JPG) para gradientes — todo mesh/gradient del hero es `radial-gradient()`/`conic-gradient()` en CSS puro.
 - **NO** aplicar glass o gradiente a secciones completas de contenido largo (listados de doctores, resultados de búsqueda, formularios). Esas secciones son fondo sólido, plano, de máxima legibilidad.
 - **NO** usar librerías de animación pesadas (GSAP, Framer Motion completo) solo para scroll-reveal — usar CSS scroll-driven animations (`animation-timeline`) o `IntersectionObserver` nativo dentro de un Client Component ligero.
@@ -199,7 +199,7 @@ Cada bloque de contenido (feature, testimonio, card de especialidad) se revela a
 
 - Estado inicial (scroll = 0): transparente o fondo sólido simple, sin blur — integrado al hero.
 - Al despegarse del top: `backdrop-filter: blur(10-16px)`, fondo semi-transparente (`bg-white/70`), borde inferior 1px sutil (`neutral-200`). Transición 200–250ms, sin salto.
-- Este es uno de los 3 usos de glass presupuestados en toda la página (junto con 2 tarjetas flotantes del hero). El estado de scroll se maneja en un Client Component mínimo (o `IntersectionObserver` sobre un sentinel), nunca con una librería completa de scroll.
+- Este es uno de los 4 usos de glass presupuestados en toda la página (junto con las 3 tarjetas flotantes del hero). El estado de scroll se maneja en un Client Component mínimo (o `IntersectionObserver` sobre un sentinel), nunca con una librería completa de scroll.
 
 ---
 
