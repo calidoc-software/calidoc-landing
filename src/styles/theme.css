@@ -55,8 +55,10 @@
   --color-success: #16a34a;
   --color-warning: #e1873d;
   --color-error: #e5484d;
+  --color-error-600: #c42b30;
 
   --radius-sm: 0.375rem;
+  --radius-field: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;

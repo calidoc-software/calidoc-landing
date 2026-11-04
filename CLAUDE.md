@@ -82,7 +82,8 @@ src/
 │   │
 │   ├── (auth)/
 │   │   ├── login/page.tsx
-│   │   └── verificar/page.tsx            # magic link / OTP
+│   │   └── verificar/page.tsx            # (legacy) magic link / OTP de login
+│   │   registro/page.tsx · registro/verificar/page.tsx   # alta de paciente: formulario → código OTP de 6 dígitos
 │   │
 │   ├── api/
 │   │   ├── auth/[...nextauth]/route.ts   # Auth.js
@@ -144,7 +145,7 @@ Flujo permitido: `app → features → shared`. Nunca al revés.
    - `server.ts` → empieza con `import 'server-only'`: fetchers y Server Actions.
 5. Los fetchers (`api/`) devuelven **modelos de vista** (ya pasados por `mappers/`); los DTO crudos de calidoc-api no salen del feature.
 6. Todo acceso HTTP a calidoc-api pasa por `shared/lib/api`; ningún componente hace `fetch` directo a la API.
-7. Variables de entorno solo vía `shared/lib/env.ts` (validadas con zod; falla el build si falta o es inválida una variable requerida), nunca `process.env` suelto. `env.ts` contiene solo variables públicas (`NEXT_PUBLIC_*`, seguras en Client Components); las privadas (`AUTH_SECRET`, etc.) van en un archivo aparte con `import "server-only"` cuando se agreguen. Cada variable nueva se declara en el schema y en `.env.example`.
+7. Variables de entorno solo vía `shared/lib/env.ts` (validadas con zod; falla el build si falta o es inválida una variable requerida), nunca `process.env` suelto. `env.ts` contiene solo variables públicas (`NEXT_PUBLIC_*`, seguras en Client Components); las privadas (`AUTH_SECRET`, etc.) van en `src/shared/lib/env.server.ts` (`import "server-only"`, validadas con zod). Cada variable nueva se declara en el schema y en `.env.example`.
 8. Alias de import `@/*` → `src/*`; sin rutas relativas que suban más de un nivel (`../../`).
 9. Estas reglas se hacen cumplir con ESLint (`no-restricted-imports` o `eslint-plugin-boundaries`), no solo por convención.
 
@@ -222,7 +223,7 @@ Cada bloque de contenido (feature, testimonio, card de especialidad) se revela a
 `accent-400 #F0A85C` (hover) · **`accent-500 #E1873D` (base)** · `accent-600 #C06B26` (texto sobre fondo claro)
 
 **Semánticos (nunca reusar colores de marca para estados de UI, excepto donde se indica):**
-`success #16A34A` · `warning #E1873D` (reusa accent) · `error #E5484D` · `info primary-500`
+`success #16A34A` · `warning #E1873D` (reusa accent) · `error #E5484D` (`error-600 #C42B30` para texto, por contraste AA) · `info primary-500`
 
 ### Uso de la escala de un color (aplica a primary/secondary/tertiary/accent)
 
@@ -236,6 +237,10 @@ Cada bloque de contenido (feature, testimonio, card de especialidad) se revela a
 | 800–900 | Gradientes y sombras coloreadas                                                   |
 
 Convención de hover/active: **hover aclara (400), active oscurece (600)** — nunca al revés.
+
+### Campos de formulario
+
+Todos los campos (`TextField`, `PasswordField`, `OtpField`) usan el radio `rounded-field` (6 px): serio y sobrio, nunca pill ni `rounded-xl`. Borde fino `neutral-300`, foco `primary-500` con halo tenue y error `error-600`. Cualquier campo nuevo reutiliza ese token.
 
 ### Neutrales — qué va dónde
 

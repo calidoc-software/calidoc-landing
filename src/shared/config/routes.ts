@@ -6,5 +6,9 @@ export const routes = {
   howItWorks: "/#como-funciona",
   forDoctors: "/#profesionales",
   login: "/login",
-  register: "/login",
+  register: "/registro",
+  registerVerify: "/registro/verificar",
+  myAppointments: "/mis-citas",
+  terms: "/terminos",
+  privacy: "/privacidad",
 } as const;

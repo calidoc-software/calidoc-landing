@@ -6,7 +6,7 @@ export function Logo() {
   return (
     <Link href={routes.home} aria-label="Calidoc, ir al inicio" className="inline-flex rounded-md">
       <Image
-        src="/logos/logo.png"
+        src="/logos/isologo.png"
         alt="Calidoc"
         width={501}
         height={200}
