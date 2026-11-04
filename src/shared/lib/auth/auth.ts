@@ -44,10 +44,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: "jwt" },
   pages: { signIn: "/login" },
   providers: [
-    // La sesión nace en calidoc-api (registro). Este provider solo recibe esa sesión sellada
+    // La sesión nace en calidoc-api (registro o login). Este provider solo recibe esa sesión sellada
     // por el servidor (`sealSession`); no valida credenciales ni llama a la API.
     Credentials({
-      id: "registro",
+      id: "sesion",
       credentials: { session: {} },
       async authorize(credentials) {
         const sealed = credentials?.session;

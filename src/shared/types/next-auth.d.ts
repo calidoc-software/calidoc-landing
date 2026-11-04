@@ -9,7 +9,7 @@ declare module "next-auth" {
   }
 
   interface User {
-    /** Sesión emitida por calidoc-api, entregada por el provider `registro`. */
+    /** Sesión emitida por calidoc-api, entregada por el provider `sesion`. */
     payload?: SessionPayload;
   }
 }

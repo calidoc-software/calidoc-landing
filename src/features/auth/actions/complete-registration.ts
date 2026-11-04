@@ -69,7 +69,7 @@ export async function completeRegistration(input: OtpInput): Promise<CompleteReg
     };
   }
 
-  await signIn("registro", { session: await sealSession(registered.data), redirect: false });
+  await signIn("sesion", { session: await sealSession(registered.data), redirect: false });
   await clearPendingRegistration();
   return { ok: true };
 }
