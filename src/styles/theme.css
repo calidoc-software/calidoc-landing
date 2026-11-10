@@ -70,9 +70,21 @@
 
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
   --animate-reveal: reveal 500ms var(--ease-out-soft) both;
+  --animate-discover: discover 900ms var(--ease-out-soft) both;
   --animate-float: float 7s ease-in-out infinite;
   --animate-float-slow: float 9s ease-in-out -3s infinite;
   --animate-float-alt: float 8s ease-in-out -5s infinite;
+
+  @keyframes discover {
+    from {
+      opacity: 0;
+      transform: translateX(28px) scale(1.03);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
 
   @keyframes float {
     0%,

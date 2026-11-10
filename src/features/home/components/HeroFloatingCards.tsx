@@ -49,28 +49,28 @@ export function HeroFloatingCards() {
   return (
     <div
       aria-hidden
-      className="pointer-events-none absolute inset-y-0 right-0 z-10 hidden w-[62%] xl:block"
+      className="pointer-events-none absolute right-0 bottom-0 z-10 hidden aspect-[1672/941] w-[min(72%,1280px)] xl:block"
     >
       <FloatingCard
         icon={<ShieldCheck size={20} />}
         tone="accent"
         title="Médico verificado"
         detail="Especialista de confianza"
-        className="top-[80%] left-[35%] animate-float"
+        className="top-[82%] left-[38%] animate-float"
       />
       <FloatingCard
         icon={<CalendarCheck size={20} />}
         tone="success"
         title="Cita confirmada"
         detail="Virtual · 4:30 p. m."
-        className="top-[50%] left-[26%] animate-float-slow"
+        className="top-[30%] left-[34%] animate-float-slow"
       />
       <FloatingCard
         icon={<Lock size={20} />}
         tone="primary"
         title="Pago seguro"
         detail="Con tarjeta o Yape"
-        className="top-[70%] right-4 animate-float-alt"
+        className="top-[72%] right-[calc(max(0px,(100vw-88rem)/2)+3rem)] animate-float-alt"
       />
     </div>
   );

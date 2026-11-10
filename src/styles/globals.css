@@ -82,10 +82,3 @@
     animation-range: entry 0% entry 40%;
   }
 }
-
-@utility bg-hero-soft {
-  background-color: var(--color-white);
-  background-image:
-    radial-gradient(60% 80% at 0% 100%, var(--color-tertiary-100) 0%, transparent 70%),
-    radial-gradient(45% 55% at 100% 0%, var(--color-tertiary-50) 0%, transparent 70%);
-}
