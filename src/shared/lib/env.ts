@@ -5,6 +5,11 @@ import { z } from "zod";
 const schema = z.object({
   NEXT_PUBLIC_API_BASE_URL: z.url(),
   NEXT_PUBLIC_CULQI_PUBLIC_KEY: z.string().min(1).optional(),
+  // Client ID de Google (público). Si falta, el acceso con Google se oculta.
+  NEXT_PUBLIC_GOOGLE_CLIENT_ID: z.preprocess(
+    (value) => (value === "" ? undefined : value),
+    z.string().min(1).optional(),
+  ),
 });
 
 // Next solo reemplaza accesos literales a `process.env.NEXT_PUBLIC_*`, por eso cada
@@ -12,6 +17,7 @@ const schema = z.object({
 const parsed = schema.safeParse({
   NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
   NEXT_PUBLIC_CULQI_PUBLIC_KEY: process.env.NEXT_PUBLIC_CULQI_PUBLIC_KEY,
+  NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
 });
 
 if (!parsed.success) {

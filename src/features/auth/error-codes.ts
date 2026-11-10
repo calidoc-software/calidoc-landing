@@ -7,4 +7,7 @@ export const AuthErrorCode = {
   InvalidCredentials: "AUTH_INVALID_CREDENTIALS",
   AccountNotActive: "AUTH_ACCOUNT_NOT_ACTIVE",
   AccountLocked: "AUTH_ACCOUNT_LOCKED",
+  ProviderTokenInvalid: "AUTH_PROVIDER_TOKEN_INVALID",
+  ExternalAccountNotFound: "AUTH_EXTERNAL_ACCOUNT_NOT_FOUND",
+  EmailNotVerifiedProvider: "AUTH_EMAIL_NOT_VERIFIED_PROVIDER",
 } as const;

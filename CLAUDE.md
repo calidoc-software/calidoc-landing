@@ -295,7 +295,7 @@ Es la opción correcta aquí porque:
 Da igual si el paciente entra por email/password o por Google — al final de cualquiera de los dos flujos, quien emite `accessToken`, `refreshToken` y los datos de usuario es **siempre tu API .NET**, nunca Next.js ni Google directamente. Esto evita tener dos modelos de identidad distintos según el proveedor.
 
 - **Credentials provider**: en `authorize()`, llama al endpoint de login de la API .NET con email/password y devuelve `{ accessToken, refreshToken, user }` tal cual lo responde la API.
-- **Google provider**: Auth.js maneja el intercambio OAuth con Google, pero el `id_token` de Google resultante se envía server-side a un endpoint dedicado de tu API (ej. `POST /auth/google-login`) que lo valida, crea o vincula al paciente, y devuelve el mismo shape `{ accessToken, refreshToken, user }`. Esto se hace en el callback `signIn` o `jwt`, nunca confiando en el perfil de Google como identidad final por sí solo.
+- **Google (implementado)**: NO se usa el provider Google de Auth.js. El botón propio (`@react-oauth/google`, `useGoogleLogin` con `flow: "auth-code"`) abre el popup de Google y entrega un **código** de un solo uso. Un Server Action lo canjea en el servidor (`oauth2.googleapis.com/token`, con `GOOGLE_CLIENT_SECRET`) por el `id_token`, que viaja directo a `POST /Auth/google-login` y **nunca llega al navegador**. La respuesta de la API (mismo shape que el login con contraseña) se sella con `sealSession` y se inicia sesión con `signIn("sesion")`. `404 AUTH_EXTERNAL_ACCOUNT_NOT_FOUND` → invitar a crear cuenta; el registro con Google (`/Auth/google-register`) va en un paso aparte.
 
 ### Estrategia de sesión: JWT (no database sessions)
 
@@ -328,8 +328,8 @@ El `layout.tsx` de `(booking)` valida la sesión del lado del servidor (o vía `
 
 ```
 AUTH_SECRET=
-AUTH_GOOGLE_ID=
-AUTH_GOOGLE_SECRET=
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=    # público; si falta, se oculta el acceso con Google
+GOOGLE_CLIENT_SECRET=            # solo servidor: canjea el código por el ID token
 NEXT_PUBLIC_API_BASE_URL=        # calidoc-api
 ```
 
@@ -391,7 +391,7 @@ Los commits previos a esta regla en español no se reescriben.
 
 - **Cabeceras de seguridad** definidas en `next.config.ts` para todas las rutas: CSP, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy` y HSTS. `poweredByHeader` desactivado.
 - **CSP sin nonces**, a propósito: un nonce obliga a renderizar todo de forma dinámica y rompería el SSG/ISR de la sección 5. A cambio `script-src` permite `'unsafe-inline'`; el resto es estricto (`default-src 'self'`, `frame-ancestors 'none'`, `object-src 'none'`).
-- **Todo origen de terceros nuevo se agrega explícitamente a la CSP** en `next.config.ts` (analytics, mapas, CDN de imágenes de doctores, etc.). Si algo "no carga" tras sumar un servicio, revisar primero la consola por violaciones de CSP. Hoy permite `*.culqi.com` y el origen de `NEXT_PUBLIC_API_BASE_URL`.
+- **Todo origen de terceros nuevo se agrega explícitamente a la CSP** en `next.config.ts` (analytics, mapas, CDN de imágenes de doctores, etc.). Si algo "no carga" tras sumar un servicio, revisar primero la consola por violaciones de CSP. Hoy permite `*.culqi.com`, `accounts.google.com/gsi/` (acceso con Google) y el origen de `NEXT_PUBLIC_API_BASE_URL`.
 - Con `images.unoptimized` el navegador descarga las imágenes directo de su origen, así que no hace falta `remotePatterns`; solo declarar el origen en `img-src` (hoy: el de la API). Las fotos de doctores redirigen (302) a otro host: añadirlo a `img-src` cuando se conozca.
 - **Entorno:** copiar `.env.example` a `.env.local`. Toda variable nueva se declara en `src/shared/lib/env.ts` y en `.env.example` (única plantilla versionada; `.env*` está ignorado).
 - **Node:** versión de referencia en `.nvmrc` (24); `engines` exige ≥ 22.

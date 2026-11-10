@@ -1,14 +1,18 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useState, useTransition } from "react";
+import { routes } from "@/shared/config/routes";
+import { env } from "@/shared/lib/env";
 import { Button } from "@/shared/ui/Button";
 import { PasswordField } from "@/shared/ui/PasswordField";
 import { TextField } from "@/shared/ui/TextField";
 import { login } from "../actions/login";
+import { loginWithGoogle } from "../actions/login-with-google";
 import { type LoginField, loginSchema } from "../schemas/login.schema";
-import { GoogleButton } from "./GoogleButton";
+import { GoogleLoginButton } from "./GoogleLoginButton";
 
 type FieldErrors = Partial<Record<LoginField, string>>;
 
@@ -17,6 +21,7 @@ const fieldOrder: LoginField[] = ["correo", "contrasena"];
 export function LoginForm({ redirectTo }: { redirectTo: string }) {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string>();
+  const [accountNotFound, setAccountNotFound] = useState(false);
   const [pending, startTransition] = useTransition();
   const router = useRouter();
   const { update } = useSession();
@@ -41,6 +46,22 @@ export function LoginForm({ redirectTo }: { redirectTo: string }) {
     };
   }
 
+  function handleGoogleCode(code: string) {
+    setFormError(undefined);
+    setAccountNotFound(false);
+    startTransition(async () => {
+      const outcome = await loginWithGoogle(code);
+      if (!outcome.ok) {
+        setFormError(outcome.message);
+        setAccountNotFound(outcome.accountNotFound ?? false);
+        return;
+      }
+      await update();
+      router.replace(redirectTo);
+      router.refresh();
+    });
+  }
+
   function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
@@ -60,6 +81,7 @@ export function LoginForm({ redirectTo }: { redirectTo: string }) {
 
     setErrors({});
     setFormError(undefined);
+    setAccountNotFound(false);
     startTransition(async () => {
       const outcome = await login(result.data);
       if (!outcome.ok) {
@@ -98,6 +120,15 @@ export function LoginForm({ redirectTo }: { redirectTo: string }) {
             className="rounded-xl bg-error/10 px-3.5 py-2.5 text-sm font-medium text-error-600"
           >
             {formError}
+            {accountNotFound && (
+              <>
+                {" "}
+                <Link href={routes.register} className="font-semibold underline">
+                  Crea tu cuenta
+                </Link>
+                .
+              </>
+            )}
           </p>
         )}
         <Button
@@ -111,12 +142,20 @@ export function LoginForm({ redirectTo }: { redirectTo: string }) {
         </Button>
       </form>
 
-      <div className="flex items-center gap-4 text-xs font-medium text-neutral-400">
-        <span aria-hidden className="h-px flex-1 bg-neutral-200" />o
-        <span aria-hidden className="h-px flex-1 bg-neutral-200" />
-      </div>
+      {env.NEXT_PUBLIC_GOOGLE_CLIENT_ID && (
+        <>
+          <div className="flex items-center gap-4 text-xs font-medium text-neutral-400">
+            <span aria-hidden className="h-px flex-1 bg-neutral-200" />o
+            <span aria-hidden className="h-px flex-1 bg-neutral-200" />
+          </div>
 
-      <GoogleButton />
+          <GoogleLoginButton
+            onCode={handleGoogleCode}
+            onError={(message) => setFormError(message)}
+            disabled={pending}
+          />
+        </>
+      )}
     </div>
   );
 }

@@ -7,17 +7,21 @@ const isDev = process.env.NODE_ENV === "development";
 const apiOrigin = new URL(env.NEXT_PUBLIC_API_BASE_URL).origin;
 // Culqi (pasarela de pago): script del checkout, iframe y llamadas de tokenización.
 const culqi = "https://*.culqi.com";
+// Google Identity Services (acceso con Google): script, popup/iframes y estilos del cliente.
+const google = "https://accounts.google.com/gsi/";
+const googleScript = "https://accounts.google.com/gsi/client";
+const googleStyle = "https://accounts.google.com/gsi/style";
 
 // CSP sin nonces para conservar SSG/ISR (un nonce obliga a renderizar todo de forma dinámica).
 // Cada origen de terceros nuevo (analytics, mapas, CDN de imágenes…) se agrega aquí de forma explícita.
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline' ${culqi}${isDev ? " 'unsafe-eval'" : ""}`,
-  "style-src 'self' 'unsafe-inline'",
+  `script-src 'self' 'unsafe-inline' ${culqi} ${googleScript}${isDev ? " 'unsafe-eval'" : ""}`,
+  `style-src 'self' 'unsafe-inline' ${googleStyle}`,
   `img-src 'self' blob: data: ${apiOrigin} ${culqi}`,
   "font-src 'self'",
-  `connect-src 'self' ${apiOrigin} ${culqi}`,
-  `frame-src ${culqi}`,
+  `connect-src 'self' ${apiOrigin} ${culqi} ${google}`,
+  `frame-src ${culqi} ${google}`,
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",

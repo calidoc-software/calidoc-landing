@@ -1,3 +1,4 @@
+import type { ComponentProps } from "react";
 import { Button } from "@/shared/ui/Button";
 
 function GoogleIcon() {
@@ -23,9 +24,9 @@ function GoogleIcon() {
   );
 }
 
-export function GoogleButton() {
+export function GoogleButton(props: Omit<ComponentProps<"button">, "children" | "className">) {
   return (
-    <Button variant="secondary" size="lg" className="w-full">
+    <Button variant="secondary" size="lg" className="w-full" {...props}>
       <GoogleIcon />
       Continuar con Google
     </Button>
