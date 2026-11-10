@@ -14,7 +14,8 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
 
   return (
     <AuthCard
-      title="Inicia sesión"
+      title="Ingresa a tu cuenta"
+      description="Nos alegra tenerte por aquí."
       footer={
         <>
           ¿No tienes una cuenta?{" "}

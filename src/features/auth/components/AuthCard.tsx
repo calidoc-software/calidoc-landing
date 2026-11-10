@@ -16,7 +16,9 @@ export function AuthCard({ title, description, children, footer }: AuthCardProps
         <h1 id="auth-title" className="text-2xl sm:text-3xl">
           {title}
         </h1>
-        {description && <p className="-mt-2 text-sm leading-6 text-neutral-600">{description}</p>}
+        {description && (
+          <p className="-mt-2 text-base leading-6 font-medium text-neutral-600">{description}</p>
+        )}
       </div>
       <div className="mt-8">{children}</div>
       {footer && <p className="mt-6 text-center text-sm text-neutral-500">{footer}</p>}

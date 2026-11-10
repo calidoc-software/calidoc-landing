@@ -12,6 +12,7 @@ export default function RegisterPage() {
   return (
     <AuthCard
       title="Crea tu cuenta"
+      description="Estás a un paso de estar más cerca de tu salud."
       footer={
         <>
           ¿Ya tienes una cuenta?{" "}
