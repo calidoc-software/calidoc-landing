@@ -42,7 +42,7 @@ export function DoctorSearch({ specialties, cities = defaultCities }: DoctorSear
       <form
         action={routes.doctors}
         method="get"
-        aria-label="Buscar médicos"
+        aria-label="Buscar"
         className="relative flex flex-col drop-shadow-[0_12px_28px_rgb(2_25_44/0.10)]"
       >
         <div
@@ -87,7 +87,7 @@ export function DoctorSearch({ specialties, cities = defaultCities }: DoctorSear
 
           <Button type="submit" className="lg:ml-1">
             <Search size={18} />
-            Buscar médicos
+            Buscar
           </Button>
         </div>
 
